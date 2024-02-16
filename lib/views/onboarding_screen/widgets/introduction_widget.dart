@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 
 class IntroductionWidget extends StatelessWidget {
-  const IntroductionWidget({super.key});
+  final String imagePath;
 
-  @override
+  const IntroductionWidget({
+    key,
+    required this.imagePath,
+  }) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Container(
-      height: size.height * 0.7,
+      height: size.height * 0.4,
       decoration: BoxDecoration(
         image: DecorationImage(
-          image: const AssetImage('assets/images/onboarding1.png'),
-          fit: BoxFit.cover,
+          image: AssetImage(imagePath),
+          fit: BoxFit.contain,
           colorFilter: ColorFilter.mode(
-            Colors.transparent.withOpacity(1),
+            Colors.white.withOpacity(1),
             BlendMode.dstATop,
           ),
         ),

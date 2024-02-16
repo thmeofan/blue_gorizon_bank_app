@@ -7,7 +7,7 @@ import '../data/repository/onboarding_repository.dart';
 import '../views/app/views/home_screen.dart';
 import '../views/news/views/article_screen.dart';
 import '../views/onboarding_screen/view/onboarding_screen.dart';
-import '../views/settings/views/profile_screen.dart';
+import '../views/settings/views/settings_screen.dart';
 
 abstract class AppRoutes {
   static const home = 'home';
@@ -26,9 +26,9 @@ abstract class AppRoutes {
       case home:
         child = const HomeScreen();
       case profile:
-        child = const ProfileScreen();
+        child = const SettingsScreen();
       // case operation:
-      //   child = OperationScreen();
+      //   child = IncomeScreen();
 
       case article:
         NewsModel news = settings.arguments as NewsModel;

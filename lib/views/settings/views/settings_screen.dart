@@ -6,14 +6,14 @@ import '../../../consts/app_text_styles/profile_text_style.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../app/views/my_in_app_web_view.dart';
 
-class ProfileScreen extends StatefulWidget {
-  const ProfileScreen({super.key});
+class SettingsScreen extends StatefulWidget {
+  const SettingsScreen({super.key});
 
   @override
-  State<ProfileScreen> createState() => _ProfileScreenState();
+  State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _ProfileScreenState extends State<ProfileScreen> {
+class _SettingsScreenState extends State<SettingsScreen> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
@@ -33,25 +33,137 @@ class _ProfileScreenState extends State<ProfileScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Text(
-          'Профиль',
+          'Settings',
           style: SynopsisTextStyle.appbar,
         ),
-        actions: [
-          IconButton(
-            iconSize: 24,
-            onPressed: () {},
-            icon: SvgPicture.asset('assets/icons/profile.svg'),
-          ),
-        ],
       ),
-      body: Container(
-        child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              ListTile(
-                tileColor: AppColors.lightGreyColor,
+      body: Padding(
+        padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom:
+                      BorderSide(width: 1.0, color: AppColors.lightGreyColor),
+                ),
+              ),
+              child: ListTile(
+                title: TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MyInAppWebView(url: 'https://google.com/'),
+                        ),
+                      );
+                    },
+                    style: const ButtonStyle(alignment: Alignment.centerLeft),
+                    icon: SvgPicture.asset(
+                      'assets/icons/back.svg',
+                      width: size.height * 0.03,
+                      height: size.height * 0.03,
+                    ),
+                    label: const Text(
+                      'Share with friends ',
+                      style: ProfileTextStyle.tile,
+                    )),
+                trailing: SvgPicture.asset(
+                  'assets/icons/arrow_right.svg',
+                  width: size.height * 0.015,
+                  height: size.height * 0.015,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.01,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom:
+                      BorderSide(width: 1.0, color: AppColors.lightGreyColor),
+                ),
+              ),
+              child: ListTile(
+                title: TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MyInAppWebView(url: 'https://google.com/'),
+                        ),
+                      );
+                    },
+                    style: const ButtonStyle(alignment: Alignment.centerLeft),
+                    icon: SvgPicture.asset(
+                      'assets/icons/human.svg',
+                      width: size.height * 0.03,
+                      height: size.height * 0.03,
+                    ),
+                    label: const Text(
+                      'Subscription info',
+                      style: ProfileTextStyle.tile,
+                    )),
+                trailing: SvgPicture.asset(
+                  'assets/icons/arrow_right.svg',
+                  width: size.height * 0.015,
+                  height: size.height * 0.015,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.01,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom:
+                      BorderSide(width: 1.0, color: AppColors.lightGreyColor),
+                ),
+              ),
+              child: ListTile(
+                title: TextButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MyInAppWebView(url: 'https://google.com/'),
+                        ),
+                      );
+                    },
+                    style: const ButtonStyle(alignment: Alignment.centerLeft),
+                    icon: SvgPicture.asset(
+                      'assets/icons/shield.svg',
+                      width: size.height * 0.03,
+                      height: size.height * 0.03,
+                    ),
+                    label: const Text(
+                      'Privacy policy',
+                      style: ProfileTextStyle.tile,
+                    )),
+                trailing: SvgPicture.asset(
+                  'assets/icons/arrow_right.svg',
+                  width: size.height * 0.015,
+                  height: size.height * 0.015,
+                ),
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.01,
+            ),
+            Container(
+              decoration: const BoxDecoration(
+                border: Border(
+                  bottom:
+                      BorderSide(width: 1.0, color: AppColors.lightGreyColor),
+                ),
+              ),
+              child: ListTile(
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
                 ),
@@ -67,104 +179,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                     style: const ButtonStyle(alignment: Alignment.centerLeft),
                     icon: SvgPicture.asset(
-                      'assets/icons/lock.svg',
-                      width: 26,
-                      height: 26,
+                      'assets/icons/note.svg',
+                      width: size.height * 0.03,
+                      height: size.height * 0.03,
                     ),
                     label: const Text(
-                      'Политика конфиденциальности',
+                      'Terms of use',
                       style: ProfileTextStyle.tile,
                     )),
-              ),
-              SizedBox(
-                height: size.height * 0.01,
-              ),
-              ListTile(
-                tileColor: AppColors.lightGreyColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
+                trailing: SvgPicture.asset(
+                  'assets/icons/arrow_right.svg',
+                  width: size.height * 0.015,
+                  height: size.height * 0.015,
                 ),
-                title: TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const MyInAppWebView(url: 'https://google.com/'),
-                        ),
-                      );
-                    },
-                    style: const ButtonStyle(alignment: Alignment.centerLeft),
-                    icon: SvgPicture.asset(
-                      'assets/icons/like-thumb_up.svg',
-                      width: 26,
-                      height: 26,
-                    ),
-                    label: const Text(
-                      'Оценить приложение',
-                      style: ProfileTextStyle.tile,
-                    )),
               ),
-              SizedBox(
-                height: size.height * 0.01,
-              ),
-              ListTile(
-                tileColor: AppColors.lightGreyColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                title: TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const MyInAppWebView(url: 'https://google.com/'),
-                        ),
-                      );
-                    },
-                    style: const ButtonStyle(alignment: Alignment.centerLeft),
-                    icon: SvgPicture.asset(
-                      'assets/icons/link-url.svg',
-                      width: 26,
-                      height: 26,
-                    ),
-                    label: const Text(
-                      'Поделиться приложением',
-                      style: ProfileTextStyle.tile,
-                    )),
-              ),
-              SizedBox(
-                height: size.height * 0.01,
-              ),
-              ListTile(
-                tileColor: AppColors.lightGreyColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                title: TextButton.icon(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) =>
-                              const MyInAppWebView(url: 'https://google.com/'),
-                        ),
-                      );
-                    },
-                    style: const ButtonStyle(alignment: Alignment.centerLeft),
-                    icon: SvgPicture.asset(
-                      'assets/icons/info.svg',
-                      width: 26,
-                      height: 26,
-                    ),
-                    label: const Text(
-                      'Условия использования',
-                      style: ProfileTextStyle.tile,
-                    )),
-              )
-            ],
-          ),
+            )
+          ],
         ),
       ),
     );

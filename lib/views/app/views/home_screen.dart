@@ -1,9 +1,10 @@
+import 'package:blue_gorizon_bank_app/data/models/quiz_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../../../consts/app_colors.dart';
 import '../../../data/models/news_model.dart';
 import '../../news/views/news_screen.dart';
+import '../../settings/views/settings_screen.dart';
 import '../../synopsis/views/synopsis_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -18,13 +19,12 @@ class _HomeScreenState extends State<HomeScreen> {
   List<Widget> homeWidgets = [
     SynopsisScreen(
       newsModel: news,
+      quizModel: quiz,
     ),
     NewsScreen(
       newsModel: news,
     ),
-    // const CalculatorScreen(),
-    // OperationScreen(),
-    // const ProfileScreen()
+    const SettingsScreen()
   ];
 
   @override
@@ -37,45 +37,35 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
               'assets/icons/home.svg',
-              width: size.height * 0.032,
-              height: size.height * 0.032,
+              width: size.height * 0.04,
+              height: size.height * 0.05,
               color: currentIndex == 0
                   ? AppColors.blueColor
                   : AppColors.darkGreyColor,
             ),
-            label: 'Главная',
+            label: 'home',
           ),
           BottomNavigationBarItem(
             icon: SvgPicture.asset(
-              'assets/icons/activity.svg',
-              width: size.height * 0.032,
-              height: size.height * 0.032,
+              'assets/icons/news.svg',
+              width: size.height * 0.04,
+              height: size.height * 0.05,
               color: currentIndex == 1
                   ? AppColors.blueColor
                   : AppColors.darkGreyColor,
             ),
-            label: 'Новости',
+            label: 'News',
           ),
           BottomNavigationBarItem(
               icon: SvgPicture.asset(
-                'assets/icons/statistics.svg',
-                width: size.height * 0.032,
-                height: size.height * 0.032,
+                'assets/icons/settings.svg',
+                width: size.height * 0.04,
+                height: size.height * 0.05,
                 color: currentIndex == 2
                     ? AppColors.blueColor
                     : AppColors.darkGreyColor,
               ),
-              label: 'Калькулятор'),
-          BottomNavigationBarItem(
-              icon: SvgPicture.asset(
-                'assets/icons/wallet.svg',
-                width: size.height * 0.032,
-                height: size.height * 0.032,
-                color: currentIndex == 3
-                    ? AppColors.blueColor
-                    : AppColors.darkGreyColor,
-              ),
-              label: 'Операции'),
+              label: 'Settings'),
         ],
         onTap: (index) {
           setState(() {
@@ -88,12 +78,6 @@ class _HomeScreenState extends State<HomeScreen> {
         selectedItemColor: AppColors.blueColor,
         showSelectedLabels: false,
         showUnselectedLabels: false,
-        selectedLabelStyle: const TextStyle(
-            // color: AppColors.lightBlueColor,
-            ),
-        unselectedLabelStyle: const TextStyle(
-          color: AppColors.midGreyColor,
-        ),
       ),
     );
   }

@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import '../../../consts/app_colors.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../../data/models/news_model.dart';
+import '../../../data/models/quiz_model.dart';
 import '../../../util/app_routes.dart';
 
-class NewsItemWidget extends StatelessWidget {
-  const NewsItemWidget({super.key, required this.newsModel});
+class QuizItemWidget extends StatelessWidget {
+  const QuizItemWidget({super.key, required this.quizModel});
 
-  final NewsModel newsModel;
+  final QuizModel quizModel;
 
   @override
   Widget build(BuildContext context) {
@@ -18,7 +19,7 @@ class NewsItemWidget extends StatelessWidget {
       child: GestureDetector(
         onTap: () {
           Navigator.of(context)
-              .pushNamed(AppRoutes.article, arguments: newsModel);
+              .pushNamed(AppRoutes.article, arguments: quizModel);
         },
         child: Container(
           height: screenSize.height * 0.15,
@@ -40,7 +41,8 @@ class NewsItemWidget extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        newsModel.title,
+                        '',
+                        //    newsModel.title,
                         maxLines: 3,
                         style: SynopsisTextStyle.title,
                         softWrap: true,
@@ -48,7 +50,8 @@ class NewsItemWidget extends StatelessWidget {
                       ),
                       Spacer(),
                       Text(
-                        newsModel.date,
+                        // newsModel.date,
+                        '',
                         style: SynopsisTextStyle.read,
                       ),
                       SizedBox(
@@ -64,7 +67,7 @@ class NewsItemWidget extends StatelessWidget {
                   width: screenSize.width * 0.3,
                   height: screenSize.height * 0.13,
                   boxFit: BoxFit.cover,
-                  imageUrl: newsModel.imageUrl,
+                  imageUrl: 'newsModel.imageUrl',
                 ),
               ),
               const SizedBox(

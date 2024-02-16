@@ -3,38 +3,43 @@ import 'package:flutter/material.dart';
 import '../../../consts/app_colors.dart';
 import '../../../consts/app_text_styles/operation_text_style.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
-import '../../app/widgets/chosen_action_button_widget.dart';
+import '../../../util/shared_pref_service.dart';
+import '../../synopsis/views/constructor_screen.dart';
+import 'constructor_screen.dart';
 
-class ConstructorScreen extends StatefulWidget {
+class IncomeScreen extends StatefulWidget {
   @override
-  _ConstructorScreenState createState() => _ConstructorScreenState();
+  _IncomeScreenState createState() => _IncomeScreenState();
 }
 
-class _ConstructorScreenState extends State<ConstructorScreen> {
-  final _descriptionController = TextEditingController();
-  final _amountController = TextEditingController();
+class _IncomeScreenState extends State<IncomeScreen> {
+  List<Map<String, dynamic>> operations = [];
   String _operationType = 'Доходы';
 
-  void _saveOperation() {
-    final description = _descriptionController.text;
-    final amount = double.tryParse(_amountController.text);
+  @override
+  void initState() {
+    super.initState();
+    _loadOperations();
+  }
 
-    if (description.isEmpty || amount == null) {
-      return;
-    }
+  void _loadOperations() async {
+    operations = await SharedPreferencesService.loadOperations();
+    setState(() {});
+  }
 
-    final operation = {
-      'description': description,
-      'amount': amount,
-      'type': _operationType,
-    };
+  void _addOperation(Map<String, dynamic> operation) async {
+    setState(() {
+      operations.add(operation);
+    });
+    await SharedPreferencesService.saveOperations(operations);
+  }
 
-    Navigator.of(context).pop(operation);
+  List<Map<String, dynamic>> get _filteredOperations {
+    return operations.where((op) => op['type'] == _operationType).toList();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -140,62 +145,55 @@ class _ConstructorScreenState extends State<ConstructorScreen> {
               );
             },
           ),
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(
-                _operationType,
-                style: OperationTextStyle.type,
-              ),
-              SizedBox(
-                height: screenSize.height * 0.02,
-              ),
-              const Text(
-                'Описание',
-                style: OperationTextStyle.description,
-              ),
-              SizedBox(
-                height: screenSize.height * 0.01,
-              ),
-              TextField(
-                controller: _descriptionController,
-                decoration: InputDecoration(
-                  labelText: 'Например продукты',
-                  labelStyle: OperationTextStyle.hint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
+          Expanded(
+            child: _filteredOperations.isEmpty
+                ? Center(child: Text('Вы ещё не ввели свои $_operationType '))
+                : ListView.builder(
+                    itemCount: _filteredOperations.length,
+                    itemBuilder: (ctx, index) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: ListTile(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          tileColor: AppColors.lightGreyColor,
+                          title: Text(
+                            '${_filteredOperations[index]['description']} ₽ ',
+                            style: OperationTextStyle.tileSum,
+                          ),
+                          subtitle: Text(
+                            _filteredOperations[index]['amount'].toString(),
+                            style: OperationTextStyle.tileSubtitle,
+                          ),
+                          trailing: Text(
+                            DateTime.now().toString().substring(0, 10),
+                            style: OperationTextStyle.date,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                ),
-              ),
-              SizedBox(
-                height: screenSize.height * 0.02,
-              ),
-              const Text(
-                'Сумма',
-                style: OperationTextStyle.description,
-              ),
-              SizedBox(
-                height: screenSize.height * 0.01,
-              ),
-              TextField(
-                controller: _amountController,
-                decoration: InputDecoration(
-                  labelText: '₽ 0,00',
-                  labelStyle: OperationTextStyle.hint,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-              ),
-              ChosenActionButton(
-                text: 'Продолжить',
-                onTap: _saveOperation,
-              )
-            ]),
-          )
+          ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: AppColors.lightGreyColor,
+        shape: CircleBorder(),
+        child: const Icon(
+          Icons.add,
+          color: AppColors.darkGreyColor,
+        ),
+        onPressed: () async {
+          final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => ConstructorScreen()),
+          );
+
+          if (result != null) {
+            _addOperation(result);
+          }
+        },
       ),
     );
   }

@@ -16,12 +16,12 @@ class ChosenActionButton extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(
         top: size.width * 0.08,
-        left: size.width * 0.08,
-        right: size.width * 0.08,
+        left: size.width * 0.02,
+        right: size.width * 0.02,
       ),
       child: SizedBox(
-        width: size.width * 0.9,
-        height: size.height * 0.065,
+        width: size.width * 0.95,
+        height: size.height * 0.055,
         child: TextButton(
           onPressed: onTap,
           style: TextButton.styleFrom(
@@ -29,7 +29,7 @@ class ChosenActionButton extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 5),
             //  minimumSize: Size(232, 56),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8), // Border radius
+              borderRadius: BorderRadius.circular(15), // Border radius
             ),
           ),
           child: Text(

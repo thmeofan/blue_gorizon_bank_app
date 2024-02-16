@@ -22,68 +22,55 @@ class NewsWidget extends StatelessWidget {
               .pushNamed(AppRoutes.article, arguments: newsModel);
         },
         child: Container(
-          height: screenSize.height * 0.3,
-          width: double.maxFinite,
+          height: screenSize.height * 0.4,
+          width: screenSize.width * 0.98,
           padding: EdgeInsets.symmetric(vertical: screenSize.width * 0.01),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15.0),
-            color: AppColors.lightGreyColor,
+            color: Colors.white,
           ),
           child: Column(
             children: [
+              SizedBox(
+                height: screenSize.height * 0.01,
+              ),
               ClipRRect(
                 borderRadius: BorderRadius.circular(15.0),
                 child: FancyShimmerImage(
                   width: screenSize.width * 0.9,
-                  height: screenSize.height * 0.13,
+                  height: screenSize.height * 0.25,
                   boxFit: BoxFit.cover,
                   imageUrl: newsModel.imageUrl,
                 ),
               ),
-              const SizedBox(
-                width: 5,
+              SizedBox(
+                height: screenSize.height * 0.01,
               ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(1.0),
+                  padding: EdgeInsets.only(
+                    left: screenSize.width * 0.02,
+                    right: screenSize.width * 0.01,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        newsModel.title,
-                        maxLines: 1,
-                        style: NewsTextStyle.title,
-                      ),
-                      SizedBox(
-                        height: screenSize.height * 0.01,
-                      ),
-                      Expanded(
-                        child: Text(
-                          newsModel.text,
-                          style: NewsTextStyle.preview,
-                          maxLines: 3,
-                          softWrap: true,
-                          overflow: TextOverflow.ellipsis,
-                        ),
+                        newsModel.date,
+                        style: NewsTextStyle.date,
                       ),
                       SizedBox(
                         height: screenSize.height * 0.02,
                       ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: screenSize.width * 0.02,
-                          ),
-                          Text(
-                            newsModel.date,
-                            style: NewsTextStyle.date,
-                          ),
-                          Spacer(),
-                          const Text('Читать далее', style: NewsTextStyle.read),
-                          SizedBox(
-                            width: screenSize.width * 0.02,
-                          ),
-                        ],
+                      Text(
+                        newsModel.title,
+                        style: NewsTextStyle.title,
+                        maxLines: 3,
+                        softWrap: true,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      SizedBox(
+                        height: screenSize.height * 0.01,
                       ),
                     ],
                   ),

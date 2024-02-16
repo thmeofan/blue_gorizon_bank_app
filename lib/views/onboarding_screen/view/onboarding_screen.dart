@@ -8,8 +8,6 @@ import '../../../consts/app_text_styles/onboarding_text_style.dart';
 import '../../../util/app_routes.dart';
 import '../../app/widgets/chosen_action_button_widget.dart';
 import '../widgets/introduction_widget.dart';
-import '../widgets/review_widget.dart';
-import '../widgets/welcome_widget.dart';
 
 class OnboardingScreen extends StatefulWidget {
   final bool? isFirstTime;
@@ -31,7 +29,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      //  extendBodyBehindAppBar: true,
       appBar: AppBar(
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -44,9 +42,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
             Expanded(
               child: CarouselSlider(
                 items: const [
-                  IntroductionWidget(),
-                  ReviewWidget(),
-                  WelcomeWidget(),
+                  IntroductionWidget(
+                    imagePath: 'assets/images/onboarding1.png',
+                  ),
+                  IntroductionWidget(
+                    imagePath: 'assets/images/onboarding2.png',
+                  ),
+                  IntroductionWidget(
+                    imagePath: 'assets/images/onboarding3.png',
+                  ),
                 ],
                 carouselController: _carouselController,
                 options: CarouselOptions(
@@ -70,27 +74,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                 topRight: Radius.circular(10),
               )),
               width: double.infinity,
-              height: size.height * 0.36,
+              height: size.height * 0.5,
               child: Padding(
                 padding: EdgeInsets.all(size.height * 0.02),
                 child: Column(
                   children: [
-                    // Row(
-                    //   mainAxisAlignment: MainAxisAlignment.start,
-                    //   children: [
-                    //     Text(
-                    //       _current == 0
-                    //           ? 'Добро пожаловать!'
-                    //           : _current == 1
-                    //               ? 'Хотите купить жилье? '
-                    //               : 'Будьте в курсе новостей!',
-                    //       style: OnboardingTextStyle.introduction,
-                    //       textAlign: TextAlign.start,
-                    //       softWrap: true,
-                    //       overflow: TextOverflow.ellipsis,
-                    //     ),
-                    //   ],
-                    // ),
                     SizedBox(
                       height: size.height * 0.01,
                     ),
@@ -111,7 +99,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         ),
                       ],
                     ),
-                    const Spacer(),
+                    SizedBox(
+                      height: size.height * 0.01,
+                    ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: List.generate(3, (index) {
@@ -119,8 +109,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                           duration: Duration(milliseconds: 200),
                           curve: Curves.easeInOut,
                           width: _current == index
-                              ? size.width * 0.075
-                              : size.width * 0.02,
+                              ? size.width * 0.2
+                              : size.width * 0.1,
                           height: size.width * 0.02,
                           margin: const EdgeInsets.symmetric(
                               vertical: 1.0, horizontal: 2.0),
@@ -129,21 +119,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             borderRadius:
                                 BorderRadius.circular(size.width * 0.01),
                             color: _current == index
-                                ? AppColors.darkGreyColor
+                                ? AppColors.blueColor
                                 : AppColors.lightGreyColor,
                           ),
                         );
                       }),
                     ),
-                    SizedBox(
-                      height: size.height * 0.01,
-                    ),
+                    const Spacer(),
                     ChosenActionButton(
                       onTap: () async {
                         context.read<OnboardingCubit>().setFirstTime();
                         Navigator.pushReplacementNamed(context, AppRoutes.home);
                       },
                       text: 'Next',
+                    ),
+                    SizedBox(
+                      height: size.height * 0.035,
                     ),
                   ],
                 ),

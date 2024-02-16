@@ -1,3 +1,4 @@
+import 'package:blue_gorizon_bank_app/consts/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
@@ -16,10 +17,10 @@ class NewsScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: AppColors.lightGreyColor,
           elevation: 0,
           title: const Text(
-            'Новости',
+            'News',
             style: SynopsisTextStyle.appbar,
           ),
           actions: [
@@ -33,6 +34,7 @@ class NewsScreen extends StatelessWidget {
           ],
         ),
         body: Container(
+          color: AppColors.lightGreyColor,
           child: Column(children: [
             Expanded(
               child: ListView.builder(

@@ -1,3 +1,4 @@
+import 'package:blue_gorizon_bank_app/consts/app_colors.dart';
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,10 +16,11 @@ class ArticleScreen extends StatelessWidget {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: AppColors.lightGreyColor,
         // centerTitle: true,
         elevation: 0,
         title: const Text(
-          'Назад',
+          'Back',
           style: SynopsisTextStyle.appbar,
         ),
         leading: IconButton(
@@ -27,8 +29,8 @@ class ArticleScreen extends StatelessWidget {
           },
           icon: SvgPicture.asset(
             'assets/icons/arrow.svg',
-            width: screenSize.width * 0.08,
-            height: screenSize.width * 0.08,
+            width: screenSize.width * 0.025,
+            height: screenSize.width * 0.025,
           ),
         ),
       ),
@@ -49,10 +51,22 @@ class ArticleScreen extends StatelessWidget {
             SizedBox(
               height: screenSize.height * 0.01,
             ),
+            Row(
+              children: [
+                SizedBox(
+                  width: screenSize.width * 0.05,
+                ),
+                Text(
+                  newsModel.date,
+                  style: NewsTextStyle.articleText,
+                  textAlign: TextAlign.start,
+                ),
+              ],
+            ),
             Padding(
               padding: EdgeInsets.symmetric(
                   horizontal: screenSize.width * 0.05,
-                  vertical: screenSize.width * 0.01),
+                  vertical: screenSize.width * 0.02),
               child: Text(
                 newsModel.title,
                 style: NewsTextStyle.articleTitle,
