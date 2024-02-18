@@ -19,6 +19,7 @@ dependencies:
   webview_flutter: ^4.7.0
   flutter_inappwebview: ^6.0.0
   fancy_shimmer_image: ^2.0.3
+  intl: ^0.19.0
 
 dev_dependencies:
   flutter_test:

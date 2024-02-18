@@ -1,15 +1,15 @@
 import 'package:blue_gorizon_bank_app/consts/app_colors.dart';
 import 'package:blue_gorizon_bank_app/data/models/quiz_model.dart';
+import 'package:blue_gorizon_bank_app/views/news/views/news_screen.dart';
+import 'package:blue_gorizon_bank_app/views/synopsis/views/quiz/quiz_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../../data/models/news_model.dart';
 import '../../../util/app_routes.dart';
 import '../../../util/shared_pref_service.dart';
-import '../../income/views/income_screen.dart';
+import '../../app/widgets/income_total_display_widget.dart';
 import '../widgets/news_item_widget.dart';
-import '../widgets/quiz_item_widget.dart';
-import 'constructor_screen.dart';
 
 class SynopsisScreen extends StatefulWidget {
   const SynopsisScreen(
@@ -24,9 +24,8 @@ class SynopsisScreen extends StatefulWidget {
 
 class _SynopsisScreenState extends State<SynopsisScreen> {
   bool showNews = true;
-
   List<Map<String, dynamic>> operations = [];
-// String _operationType = 'Доходы';
+  double totalIncome = 0.0;
 
   @override
   void initState() {
@@ -36,164 +35,248 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
 
   void _loadOperations() async {
     operations = await SharedPreferencesService.loadOperations();
+    totalIncome = _calculateTotalIncome();
     setState(() {});
   }
 
-  void _addOperation(Map<String, dynamic> operation) async {
-    setState(() {
-      operations.add(operation);
-    });
-    await SharedPreferencesService.saveOperations(operations);
+  double _calculateTotalIncome() {
+    return operations.fold(0, (sum, op) => sum + (op['amount'] as double));
   }
 
-// List<Map<String, dynamic>> get _filteredOperations {
-//   return operations.where((op) => op['type'] == _operationType).toList();
-// }
-
-//Widget build(BuildContext context) {
-//     final screenSize = MediaQuery.of(context).size;
-//
-//     return Scaffold(
-//         appBar: AppBar(
-//           backgroundColor: AppColors.lightGreyColor,
-//           elevation: 0,
-//           title: const Text(
-//             'Good morning',
-//             style: SynopsisTextStyle.appbar,
-//           ),
-//           actions: [
-//             IconButton(
-//               iconSize: 24,
-//               onPressed: () {
-//                 Navigator.of(context).pushNamed(AppRoutes.profile);
-//               },
-//               icon: SvgPicture.asset('assets/icons/profile.svg'),
-//             ),
-//           ],
-//         ),
-//         body: Container(
-//           color: AppColors.lightGreyColor,
-//           child:
-//               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-//             GestureDetector(
-//               onTap: () async {
-//                 final result = await Navigator.push(
-//                   context,
-//                   MaterialPageRoute(builder: (context) => ConstructorScreen()),
-//                 );
-//
-//                 // if (result != null) {
-//                 //   _addOperation(result);
-//                 // }
-//               },
-//               child: const Column(
-//                 children: [
-//                   Text(
-//                     'Income amount',
-//                     textAlign: TextAlign.start,
-//                   ),
-//                   Text(
-//                     'data',
-//                     textAlign: TextAlign.start,
-//                   ),
-//                 ],
-//               ),
-//             ),
-//             const Text(
-//               'Income  source',
-//               textAlign: TextAlign.start,
-//             ),
-//             ListView.builder(
-//               scrollDirection: Axis.horizontal,
-//               itemCount: 0,
-//               itemBuilder: (BuildContext context, int index) {
-//                 return NewsItemWidget(newsModel: widget.newsModel[index]);
-//               },
-//             ),
-//             Expanded(
-//               child: ListView.builder(
-//                 itemCount: widget.newsModel.length,
-//                 itemBuilder: (BuildContext context, int index) {
-//                   return NewsItemWidget(newsModel: widget.newsModel[index]);
-//                 },
-//               ),
-//             ),
-//             SizedBox(
-//               height: screenSize.height * 0.01,
-//             ),
-//           ]),
-//         ));
-//   }
-// }
   @override
   Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Custom Screen'),
+        backgroundColor: AppColors.lightGreyColor,
+        elevation: 0,
+        title: const Text(
+          'Good morning',
+          style: SynopsisTextStyle.appbar,
+        ),
       ),
-      body: Column(
-        children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => IncomeScreen()),
-              );
-            },
-            child: Container(
-              height: MediaQuery.of(context).size.height * 0.25,
-              color: Colors.blue,
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+      body: Container(
+        color: AppColors.lightGreyColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            IncomeTotalDisplay(totalIncome: totalIncome),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: screenSize.height * 0.01,
+                horizontal: screenSize.width * 0.03,
+              ),
+              child: Text(
+                'Income',
+                style: SynopsisTextStyle.title,
+              ),
+            ),
+            SizedBox(
+              height: screenSize.height * 0.1,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: operations.length,
+                itemBuilder: (context, index) {
+                  return Card(
+                    color: Colors.white,
+                    margin: EdgeInsets.symmetric(
+                      vertical: screenSize.height * 0.01,
+                      horizontal: screenSize.width * 0.03,
+                    ),
+                    child: Container(
+                      //color: Colors.white,
+                      width: screenSize.width * 0.28,
+                      padding: EdgeInsets.symmetric(
+                        vertical: screenSize.width * 0.02,
+                        horizontal: screenSize.width * 0.03,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            operations[index]['description'],
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(height: 4),
+                          Text(
+                            '${operations[index]['amount'].toStringAsFixed(0)} \$',
+                            maxLines: 1,
+                            // style: TextStyle(
+                            //   color: Colors.green,
+                            // ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(
+                vertical: screenSize.height * 0.012,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text('Income amount',
-                      style: TextStyle(fontSize: 18, color: Colors.white)),
-                  Text('Income',
-                      style: TextStyle(fontSize: 24, color: Colors.white)),
+                  _buildSwitchButton('News', true),
+                  _buildSwitchButton('Quiz', false),
+                ],
+              ),
+            ),
+            Expanded(
+              child: showNews
+                  ? Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: screenSize.height * 0.01,
+                            ),
+                            child: Row(
+                              children: [
+                                const Text('8 news'),
+                                const Spacer(),
+                                TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NewsScreen(newsModel: news)));
+                                    },
+                                    child: const Text('View all'))
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: widget.newsModel.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return NewsItemWidget(
+                                    newsModel: widget.newsModel[index]);
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          Expanded(
+                              child: Column(
+                            children: [
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: screenSize.height * 0.01,
+                                ),
+                                child: Row(
+                                  children: [
+                                    const Text('2 themes'),
+                                    const Spacer(),
+                                    TextButton(
+                                      onPressed: () {
+                                        Navigator.of(context)
+                                            .push(MaterialPageRoute(
+                                          builder: (context) =>
+                                              QuizScreen(quizzes: quiz),
+                                        ));
+                                      },
+                                      child: const Text('View all'),
+                                    )
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: ListView(
+                                  children: [
+                                    buildCard(
+                                        screenSize,
+                                        'Additional features and improvements',
+                                        '17 february 2024'),
+                                    SizedBox(height: screenSize.height * 0.01),
+                                    buildCard(
+                                        screenSize,
+                                        'Convenience of using the mobile banking application',
+                                        '18 february 2024'),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )),
+                        ],
+                      ),
+                    ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildCard(Size screenSize, String text, String date) {
+    return Container(
+      height: screenSize.height * 0.15,
+      width: double.maxFinite,
+      padding: EdgeInsets.symmetric(
+        vertical: screenSize.width * 0.01,
+      ),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(15.0),
+        color: AppColors.lightGreyColor,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          const SizedBox(width: 5),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.all(5.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(text),
+                  const Spacer(),
+                  SizedBox(
+                    height: 35,
+                    child: Stack(
+                      children: <Widget>[
+                        for (int i = 1; i <= 5; i++)
+                          Positioned(
+                            left: i * 25.0,
+                            child: Image.asset('assets/images/avatar$i.png',
+                                width: 35),
+                          ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: screenSize.height * 0.005),
                 ],
               ),
             ),
           ),
-          Container(
-            height: MediaQuery.of(context).size.height * 0.15,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: 10, // Replace with your actual item count
-              itemBuilder: (BuildContext context, int index) {
-                return Container(
-                  width: 100, // Set your desired width for each item
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Item $index'), // Replace with your actual data
-                      Text('Detail $index'), // Replace with your actual data
-                    ],
-                  ),
-                );
-              },
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              _buildSwitchButton('News', true),
-              _buildSwitchButton('Quiz', false),
-            ],
-          ),
-          Expanded(
-            child: showNews
-                ? ListView.builder(
-                    itemCount: widget.newsModel.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return NewsItemWidget(newsModel: widget.newsModel[index]);
-                    },
-                  )
-                : ListView.builder(
-                    itemCount: widget.quizModel.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return QuizItemWidget(quizModel: widget.quizModel[index]);
-                    },
-                  ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(date),
           ),
         ],
       ),
@@ -201,21 +284,46 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
   }
 
   Widget _buildSwitchButton(String title, bool isNews) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          showNews = isNews;
-        });
-      },
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-        decoration: BoxDecoration(
-          color: showNews == isNews ? Colors.blue : Colors.grey,
-          borderRadius: BorderRadius.circular(20.0),
-        ),
-        child: Text(
-          title,
-          style: TextStyle(color: Colors.white),
+    Color selectedColor = Colors.white;
+    Color unselectedColor = AppColors.lightGreyColor;
+    final screenSize = MediaQuery.of(context).size;
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        // vertical: screenSize.height * 0.012,
+        horizontal: screenSize.width * 0.02,
+      ),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            showNews = isNews;
+          });
+        },
+        child: Container(
+          padding: EdgeInsets.symmetric(
+            vertical: screenSize.height * 0.012,
+            horizontal: screenSize.width * 0.05,
+          ),
+          decoration: BoxDecoration(
+            color: showNews == isNews ? AppColors.blueColor : Colors.white,
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          child: Row(
+            children: [
+              SvgPicture.asset(
+                showNews == isNews
+                    ? 'assets/icons/news_icon.svg'
+                    : 'assets/icons/quiz_icon.svg',
+                color: showNews == isNews ? selectedColor : unselectedColor,
+              ),
+              const SizedBox(width: 8.0),
+              Text(
+                title,
+                style: TextStyle(
+                  color: showNews == isNews ? selectedColor : unselectedColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,9 +1,8 @@
 import 'package:blue_gorizon_bank_app/consts/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../../data/models/news_model.dart';
-import '../../../util/app_routes.dart';
 import '../widgets/news_widget.dart';
 
 class NewsScreen extends StatelessWidget {
@@ -23,15 +22,6 @@ class NewsScreen extends StatelessWidget {
             'News',
             style: SynopsisTextStyle.appbar,
           ),
-          actions: [
-            IconButton(
-              iconSize: 24,
-              onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.profile);
-              },
-              icon: SvgPicture.asset('assets/icons/profile.svg'),
-            ),
-          ],
         ),
         body: Container(
           color: AppColors.lightGreyColor,

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 import '../../../consts/app_colors.dart';
-import '../../../consts/app_text_styles/profile_text_style.dart';
+import '../../../consts/app_text_styles/settings_text_style.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../app/views/my_in_app_web_view.dart';
 
@@ -28,7 +28,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
     return Scaffold(
-      //extendBodyBehindAppBar: true,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -68,7 +67,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     label: const Text(
                       'Share with friends ',
-                      style: ProfileTextStyle.tile,
+                      style: SettingsTextStyle.tile,
                     )),
                 trailing: SvgPicture.asset(
                   'assets/icons/arrow_right.svg',
@@ -106,7 +105,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     label: const Text(
                       'Subscription info',
-                      style: ProfileTextStyle.tile,
+                      style: SettingsTextStyle.tile,
                     )),
                 trailing: SvgPicture.asset(
                   'assets/icons/arrow_right.svg',
@@ -144,7 +143,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     label: const Text(
                       'Privacy policy',
-                      style: ProfileTextStyle.tile,
+                      style: SettingsTextStyle.tile,
                     )),
                 trailing: SvgPicture.asset(
                   'assets/icons/arrow_right.svg',
@@ -185,7 +184,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                     label: const Text(
                       'Terms of use',
-                      style: ProfileTextStyle.tile,
+                      style: SettingsTextStyle.tile,
                     )),
                 trailing: SvgPicture.asset(
                   'assets/icons/arrow_right.svg',

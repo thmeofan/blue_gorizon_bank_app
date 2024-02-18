@@ -1,11 +1,11 @@
+import 'package:blue_gorizon_bank_app/consts/app_text_styles/settings_text_style.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 
 import '../../../consts/app_colors.dart';
 import '../../../consts/app_text_styles/operation_text_style.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../../util/shared_pref_service.dart';
-import '../../synopsis/views/constructor_screen.dart';
-import 'constructor_screen.dart';
 
 class IncomeScreen extends StatefulWidget {
   @override
@@ -15,11 +15,19 @@ class IncomeScreen extends StatefulWidget {
 class _IncomeScreenState extends State<IncomeScreen> {
   List<Map<String, dynamic>> operations = [];
   String _operationType = 'Доходы';
+  late TextEditingController _descriptionController;
 
   @override
   void initState() {
     super.initState();
     _loadOperations();
+    _descriptionController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   void _loadOperations() async {
@@ -38,162 +46,209 @@ class _IncomeScreenState extends State<IncomeScreen> {
     return operations.where((op) => op['type'] == _operationType).toList();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Мои операции',
-          style: SynopsisTextStyle.appbar,
-        ),
-      ),
-      body: Column(
-        children: <Widget>[
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              double width90Percent = constraints.maxWidth * 0.95;
-
-              return Center(
-                child: Container(
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(15.0),
-                  ),
-                  width: width90Percent,
-                  child: Stack(
-                    children: [
-                      Positioned(
-                        left:
-                            _operationType == 'Доходы' ? 0 : width90Percent / 2,
-                        top: 0,
-                        bottom: 0,
-                        width: width90Percent / 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: _operationType == 'Доходы'
-                                ? const BorderRadius.only(
-                                    topLeft: Radius.circular(15.0),
-                                    bottomLeft: Radius.circular(15.0),
-                                  )
-                                : const BorderRadius.only(
-                                    topRight: Radius.circular(15.0),
-                                    bottomRight: Radius.circular(15.0),
-                                  ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left:
-                            _operationType == 'Доходы' ? width90Percent / 2 : 0,
-                        top: 0,
-                        bottom: 0,
-                        width: width90Percent / 2,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: AppColors.lightGreyColor,
-                            borderRadius: _operationType == 'Доходы'
-                                ? const BorderRadius.only(
-                                    topRight: Radius.circular(15.0),
-                                    bottomRight: Radius.circular(15.0),
-                                  )
-                                : const BorderRadius.only(
-                                    topLeft: Radius.circular(15.0),
-                                    bottomLeft: Radius.circular(15.0),
-                                  ),
-                          ),
-                        ),
-                      ),
-                      Center(
-                        child: ToggleButtons(
-                          isSelected: _operationType == 'Доходы'
-                              ? [true, false]
-                              : [false, true],
-                          onPressed: (int index) {
-                            setState(() {
-                              _operationType =
-                                  index == 0 ? 'Доходы' : 'Расходы';
-                            });
-                          },
-                          selectedBorderColor: Colors.transparent,
-                          color: AppColors.lightGreyColor,
-                          selectedColor: Colors.white,
-                          fillColor: Colors.transparent,
-                          borderColor: Colors.transparent,
+  void _showAddIncomeBottomSheet() {
+    double tempAmount = 0.0;
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext bc) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return Container(
+              height: MediaQuery.of(context).size.height * 0.5,
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    TextField(
+                      controller: _descriptionController,
+                      decoration: InputDecoration(
+                        labelText: 'Income description',
+                        border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
-                          children: const <Widget>[
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 35.0),
-                              child: Text(
-                                'Доходы',
-                                style: OperationTextStyle.switchStyle,
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 35.0),
-                              child: Text(
-                                'Расходы',
-                                style: OperationTextStyle.switchStyle,
-                              ),
-                            ),
-                          ],
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(height: 20),
+                    Text('Select amount: ${tempAmount.toInt()}₽'),
+                    Slider(
+                      min: 0,
+                      max: 50000,
+                      value: tempAmount,
+                      onChanged: (value) {
+                        setState(() {
+                          tempAmount = value;
+                        });
+                      },
+                    ),
+                    ElevatedButton(
+                      child: const Text('Add Income'),
+                      onPressed: () {
+                        if (_descriptionController.text.isNotEmpty) {
+                          _addOperation({
+                            'description': _descriptionController.text,
+                            'amount': tempAmount,
+                            'type': _operationType,
+                          });
+                          _descriptionController.clear();
+                          Navigator.pop(context);
+                        }
+                      },
+                    ),
+                  ],
                 ),
-              );
-            },
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  double _calculateTotalIncome() {
+    return _filteredOperations.fold(
+        0, (sum, op) => sum + (op['amount'] as double));
+  }
+
+  Widget _incomeTotalDisplay() {
+    Size size = MediaQuery.of(context).size;
+    double totalIncome = _calculateTotalIncome();
+    return Container(
+      padding: EdgeInsets.all(size.height * 0.02),
+      decoration: const BoxDecoration(
+        color: AppColors.lightGreyColor,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          const Text(
+            'Personal Income',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+            ),
           ),
-          Expanded(
-            child: _filteredOperations.isEmpty
-                ? Center(child: Text('Вы ещё не ввели свои $_operationType '))
-                : ListView.builder(
-                    itemCount: _filteredOperations.length,
-                    itemBuilder: (ctx, index) {
-                      return Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: ListTile(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                          ),
-                          tileColor: AppColors.lightGreyColor,
-                          title: Text(
-                            '${_filteredOperations[index]['description']} ₽ ',
-                            style: OperationTextStyle.tileSum,
-                          ),
-                          subtitle: Text(
-                            _filteredOperations[index]['amount'].toString(),
-                            style: OperationTextStyle.tileSubtitle,
-                          ),
-                          trailing: Text(
-                            DateTime.now().toString().substring(0, 10),
-                            style: OperationTextStyle.date,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
+          SizedBox(height: 4),
+          Text(
+            '${totalIncome.toStringAsFixed(0)} \$',
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.green,
+            ),
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: AppColors.lightGreyColor,
-        shape: CircleBorder(),
-        child: const Icon(
-          Icons.add,
-          color: AppColors.darkGreyColor,
-        ),
-        onPressed: () async {
-          final result = await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ConstructorScreen()),
-          );
+    );
+  }
 
-          if (result != null) {
-            _addOperation(result);
-          }
-        },
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          color: AppColors.blueColor,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back_ios_new_outlined),
+        ),
+        backgroundColor: AppColors.lightGreyColor,
+        title: const Text(
+          'Back',
+          style: SettingsTextStyle.back,
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              _showAddIncomeBottomSheet();
+            },
+            child: Text(
+              'Add income',
+              style: SettingsTextStyle.back,
+            ),
+          )
+        ],
+      ),
+      body: Container(
+        color: AppColors.lightGreyColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            _incomeTotalDisplay(),
+            SizedBox(
+              height: size.height * 0.01,
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: size.height * 0.01, left: size.height * 0.02),
+              child: Text('Income history'),
+            ),
+            Padding(
+              padding: EdgeInsets.only(
+                top: size.height * 0.01,
+                left: size.height * 0.02,
+                bottom: size.height * 0.01,
+              ),
+              child: Text(_filteredOperations.length.toString()),
+            ),
+            Expanded(
+              child: _filteredOperations.isEmpty
+                  ? Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: const Center(
+                          child: Text(
+                              'No information on income yet,\n click on the "Add income" button ')),
+                    )
+                  : Container(
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(16),
+                          topRight: Radius.circular(16),
+                        ),
+                      ),
+                      child: ListView.builder(
+                        itemCount: _filteredOperations.length,
+                        itemBuilder: (ctx, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: const BoxDecoration(
+                                border: Border(
+                                  bottom: BorderSide(
+                                      width: 1.0,
+                                      color: AppColors.lightGreyColor),
+                                ),
+                              ),
+                              child: ListTile(
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                tileColor: AppColors.lightGreyColor,
+                                title: Text(
+                                  '${_filteredOperations[index]['description']}  ',
+                                  style: OperationTextStyle.tileSum,
+                                ),
+                                trailing: Text(
+                                  '${_filteredOperations[index]['amount'].toStringAsFixed(0)} \$ ',
+                                  style: OperationTextStyle.tileSubtitle,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

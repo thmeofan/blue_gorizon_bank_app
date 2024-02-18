@@ -1,5 +1,6 @@
+import 'package:blue_gorizon_bank_app/consts/app_text_styles/settings_text_style.dart';
 import 'package:blue_gorizon_bank_app/data/models/quiz_model.dart';
-import 'package:blue_gorizon_bank_app/views/synopsis/widgets/quiz_item_widget.dart';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -14,48 +15,111 @@ class QuizScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Find all distinct themes from the quizzes list
     final themes = quizzes.map((quiz) => quiz.theme).toSet().toList();
-
+    final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Choose a Theme'),
+        leading: IconButton(
+          color: AppColors.blueColor,
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          icon: Icon(Icons.arrow_back_ios_new_outlined),
+        ),
+        backgroundColor: AppColors.lightGreyColor,
+        title: const Text(
+          'Back',
+          style: SettingsTextStyle.back,
+        ),
       ),
-      body: ListView.builder(
-        itemCount: themes.length,
-        itemBuilder: (context, index) {
-          String theme = themes[index];
-          return GestureDetector(
-            onTap: () {
-              List<QuizModel> themeQuizzes =
-                  quizzes.where((quiz) => quiz.theme == theme).toList();
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => DialogueScreen(quizzes: themeQuizzes),
-                ),
-              );
-            },
-            child: ThemeContainer(
-                theme: theme), // No need to pass context or quizzes
-          );
-        },
+      body: Container(
+        color: AppColors.lightGreyColor,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text(
+                'Quiz',
+                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.only(left: 8.0, bottom: 8.0),
+              child: Text(
+                '2 themes',
+                style: TextStyle(fontSize: 16.0),
+              ),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: themes.length,
+                itemBuilder: (context, index) {
+                  String theme = themes[index];
+                  return GestureDetector(
+                    onTap: () {
+                      List<QuizModel> themeQuizzes =
+                          quizzes.where((quiz) => quiz.theme == theme).toList();
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              DialogueScreen(quizzes: themeQuizzes),
+                        ),
+                      );
+                    },
+                    child:
+                        themeContainer(theme: theme, date: '19 february 2024'),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  Widget ThemeContainer({required String theme}) {
+  Widget themeContainer({required String theme, required String date}) {
+    List<String> avatarPaths =
+        List.generate(5, (index) => 'assets/images/avatar${index + 1}.png');
+    avatarPaths.shuffle(Random());
+
     return Container(
       margin: EdgeInsets.all(8.0),
       padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
       decoration: BoxDecoration(
-        color: Colors.blueAccent,
+        color: Colors.white,
         borderRadius: BorderRadius.circular(8.0),
       ),
-      child: Center(
-        child: Text(
-          theme,
-          style: TextStyle(fontSize: 24.0, color: Colors.white),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            theme,
+            textAlign: TextAlign.start,
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: SizedBox(
+                  height: 35,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      for (int i = 0; i < avatarPaths.length; i++)
+                        Positioned(
+                          left: i * 25.0,
+                          child: Image.asset(avatarPaths[i], width: 35),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+              Text(date), // The date text
+            ],
+          ),
+        ],
       ),
     );
   }
