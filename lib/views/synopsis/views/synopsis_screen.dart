@@ -74,45 +74,60 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
             ),
             SizedBox(
               height: screenSize.height * 0.11,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: operations.length,
-                itemBuilder: (context, index) {
-                  return Card(
-                    color: Colors.white,
-                    margin: EdgeInsets.symmetric(
-                      vertical: screenSize.height * 0.005,
-                      horizontal: screenSize.width * 0.02,
-                    ),
-                    child: Container(
-                      width: screenSize.width * 0.3,
-                      padding: EdgeInsets.symmetric(
-                        vertical: screenSize.width * 0.005,
-                        horizontal: screenSize.width * 0.02,
+              child: operations.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: screenSize.width * 0.03,
+                        ),
+                        child: Text(
+                          'No income info yet, click on the Personal Income widget to add information.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              color: Colors.black.withOpacity(0.5),
+                              fontWeight: FontWeight.w300),
+                        ),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          Text(
-                            operations[index]['description'],
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                    )
+                  : ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: operations.length,
+                      itemBuilder: (context, index) {
+                        return Card(
+                          color: Colors.white,
+                          margin: EdgeInsets.symmetric(
+                            vertical: screenSize.height * 0.005,
+                            horizontal: screenSize.width * 0.02,
+                          ),
+                          child: Container(
+                            width: screenSize.width * 0.3,
+                            padding: EdgeInsets.symmetric(
+                              vertical: screenSize.width * 0.005,
+                              horizontal: screenSize.width * 0.02,
+                            ),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Text(
+                                  operations[index]['description'],
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  '${operations[index]['amount'].toStringAsFixed(0)} \$',
+                                  maxLines: 1,
+                                ),
+                              ],
                             ),
                           ),
-                          SizedBox(height: 4),
-                          Text(
-                            '${operations[index]['amount'].toStringAsFixed(0)} \$',
-                            maxLines: 1,
-                          ),
-                        ],
-                      ),
+                        );
+                      },
                     ),
-                  );
-                },
-              ),
             ),
             Padding(
               padding: EdgeInsets.symmetric(
