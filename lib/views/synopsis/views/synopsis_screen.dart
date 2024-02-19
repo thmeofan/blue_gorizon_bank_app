@@ -31,9 +31,10 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
   void initState() {
     super.initState();
     _loadOperations();
+    _setupBackListener();
   }
 
-  void _loadOperations() async {
+  Future<void> _loadOperations() async {
     operations = await SharedPreferencesService.loadOperations();
     totalIncome = _calculateTotalIncome();
     setState(() {});
@@ -41,6 +42,22 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
 
   double _calculateTotalIncome() {
     return operations.fold(0, (sum, op) => sum + (op['amount'] as double));
+  }
+
+  void _updateOperations() {
+    setState(() {
+      //  operations = SharedPreferencesService.loadOperations();
+      totalIncome = _calculateTotalIncome();
+    });
+  }
+
+  void _setupBackListener() {
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      ModalRoute.of(context)!.addScopedWillPopCallback(() async {
+        _loadOperations();
+        return true;
+      });
+    });
   }
 
   @override
@@ -56,198 +73,208 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
           style: SynopsisTextStyle.appbar,
         ),
       ),
-      body: Container(
-        color: AppColors.lightGreyColor,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            IncomeTotalDisplay(totalIncome: totalIncome),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: screenSize.height * 0.005,
-                horizontal: screenSize.width * 0.03,
+      body: RefreshIndicator(
+        onRefresh: _loadOperations,
+        child: Container(
+          color: AppColors.lightGreyColor,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              IncomeTotalDisplay(totalIncome: totalIncome),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: screenSize.height * 0.005,
+                  horizontal: screenSize.width * 0.03,
+                ),
+                child: Text(
+                  'Income',
+                  style: SynopsisTextStyle.title,
+                ),
               ),
-              child: Text(
-                'Income',
-                style: SynopsisTextStyle.title,
-              ),
-            ),
-            SizedBox(
-              height: screenSize.height * 0.11,
-              child: operations.isEmpty
-                  ? Center(
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: screenSize.width * 0.03,
-                        ),
-                        child: Text(
-                          'No income info yet, click on the Personal Income widget to add information.',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                              color: Colors.black.withOpacity(0.5),
-                              fontWeight: FontWeight.w300),
-                        ),
-                      ),
-                    )
-                  : ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: operations.length,
-                      itemBuilder: (context, index) {
-                        return Card(
-                          color: Colors.white,
-                          margin: EdgeInsets.symmetric(
-                            vertical: screenSize.height * 0.005,
-                            horizontal: screenSize.width * 0.02,
+              SizedBox(
+                height: screenSize.height * 0.11,
+                child: operations.isEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: screenSize.width * 0.03,
                           ),
-                          child: Container(
-                            width: screenSize.width * 0.3,
-                            padding: EdgeInsets.symmetric(
-                              vertical: screenSize.width * 0.005,
+                          child: Text(
+                            'No income info yet, click on the Personal Income widget to add information. Or pull the screen to refresh it if you already added information',
+                            textAlign: TextAlign.center,
+                            maxLines: 3,
+                            softWrap: true,
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.5),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w300,
+                              overflow: TextOverflow.visible,
+                            ),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        itemCount: operations.length,
+                        itemBuilder: (context, index) {
+                          return Card(
+                            color: Colors.white,
+                            margin: EdgeInsets.symmetric(
+                              vertical: screenSize.height * 0.005,
                               horizontal: screenSize.width * 0.02,
                             ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: <Widget>[
-                                Text(
-                                  operations[index]['description'],
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  '${operations[index]['amount'].toStringAsFixed(0)} \$',
-                                  maxLines: 1,
-                                ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(
-                vertical: screenSize.height * 0.012,
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  _buildSwitchButton('News', true),
-                  _buildSwitchButton('Quiz', false),
-                ],
-              ),
-            ),
-            Expanded(
-              child: showNews
-                  ? Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: screenSize.height * 0.01,
-                            ),
-                            child: Row(
-                              children: [
-                                Text(
-                                  '8 news',
-                                  style: QuizTextStyle.dates,
-                                ),
-                                const Spacer(),
-                                TextButton(
-                                    onPressed: () {
-                                      Navigator.of(context).push(
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  NewsScreen(newsModel: news)));
-                                    },
-                                    child: const Text('View all',
-                                        style: SynopsisTextStyle.appbar))
-                              ],
-                            ),
-                          ),
-                          Expanded(
-                            child: ListView.builder(
-                              itemCount: widget.newsModel.length,
-                              itemBuilder: (BuildContext context, int index) {
-                                return NewsItemWidget(
-                                    newsModel: widget.newsModel[index]);
-                              },
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Container(
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(16),
-                          topRight: Radius.circular(16),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          Expanded(
+                            child: Container(
+                              width: screenSize.width * 0.3,
+                              padding: EdgeInsets.symmetric(
+                                vertical: screenSize.width * 0.005,
+                                horizontal: screenSize.width * 0.02,
+                              ),
                               child: Column(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: screenSize.height * 0.01,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Text(
-                                      '2 themes',
-                                      style: QuizTextStyle.dates,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: <Widget>[
+                                  Text(
+                                    operations[index]['description'],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    const Spacer(),
-                                    TextButton(
+                                  ),
+                                  SizedBox(height: 4),
+                                  Text(
+                                    '${operations[index]['amount'].toStringAsFixed(0)} \$',
+                                    maxLines: 1,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  vertical: screenSize.height * 0.012,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    _buildSwitchButton('News', true),
+                    _buildSwitchButton('Quiz', false),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: showNews
+                    ? Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            topRight: Radius.circular(16),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: screenSize.height * 0.01,
+                              ),
+                              child: Row(
+                                children: [
+                                  Text(
+                                    '8 news',
+                                    style: QuizTextStyle.dates,
+                                  ),
+                                  const Spacer(),
+                                  TextButton(
                                       onPressed: () {
-                                        Navigator.of(context)
-                                            .push(MaterialPageRoute(
-                                          builder: (context) =>
-                                              QuizScreen(quizzes: quiz),
-                                        ));
+                                        Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                                builder: (context) =>
+                                                    NewsScreen(
+                                                        newsModel: news)));
                                       },
                                       child: const Text('View all',
-                                          style: SynopsisTextStyle.appbar),
-                                    )
-                                  ],
-                                ),
+                                          style: SynopsisTextStyle.appbar))
+                                ],
                               ),
-                              Expanded(
-                                child: ListView(
-                                  children: [
-                                    buildCard(
-                                        screenSize,
-                                        'Additional features and improvements',
-                                        '17 february 2024'),
-                                    SizedBox(height: screenSize.height * 0.01),
-                                    buildCard(
-                                        screenSize,
-                                        'Convenience of using the mobile banking application',
-                                        '18 february 2024'),
-                                  ],
-                                ),
+                            ),
+                            Expanded(
+                              child: ListView.builder(
+                                itemCount: widget.newsModel.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  return NewsItemWidget(
+                                      newsModel: widget.newsModel[index]);
+                                },
                               ),
-                            ],
-                          )),
-                        ],
+                            ),
+                          ],
+                        ),
+                      )
+                    : Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(16),
+                            topRight: Radius.circular(16),
+                          ),
+                        ),
+                        child: Column(
+                          children: [
+                            Expanded(
+                                child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: screenSize.height * 0.01,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        '2 themes',
+                                        style: QuizTextStyle.dates,
+                                      ),
+                                      const Spacer(),
+                                      TextButton(
+                                        onPressed: () {
+                                          Navigator.of(context)
+                                              .push(MaterialPageRoute(
+                                            builder: (context) =>
+                                                QuizScreen(quizzes: quiz),
+                                          ));
+                                        },
+                                        child: const Text('View all',
+                                            style: SynopsisTextStyle.appbar),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Expanded(
+                                  child: ListView(
+                                    children: [
+                                      buildCard(
+                                          screenSize,
+                                          'Additional features and improvements',
+                                          '17 february 2024'),
+                                      SizedBox(
+                                          height: screenSize.height * 0.01),
+                                      buildCard(
+                                          screenSize,
+                                          'Convenience of using the mobile banking application',
+                                          '18 february 2024'),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            )),
+                          ],
+                        ),
                       ),
-                    ),
-            ),
-          ],
+              ),
+            ],
+          ),
         ),
       ),
     );

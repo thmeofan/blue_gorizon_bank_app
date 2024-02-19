@@ -148,12 +148,13 @@ class _IncomeScreenState extends State<IncomeScreen> {
         leading: IconButton(
           color: AppColors.blueColor,
           onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                  builder: (context) =>
-                      SynopsisScreen(newsModel: news, quizModel: quiz)),
-            );
+            // Navigator.pushReplacement(
+            //   context,
+            //   MaterialPageRoute(
+            //       builder: (context) =>
+            //           SynopsisScreen(newsModel: news, quizModel: quiz)),
+            // );
+            Navigator.pop(context);
           },
           icon: const Icon(Icons.arrow_back_ios_new_outlined),
         ),
