@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
 //
 // import '../../../consts/app_colors.dart';
-// import '../../../consts/app_text_styles/operation_text_style.dart';
+// import '../../../consts/app_text_styles/income_text_style.dart';
 // import '../../../consts/app_text_styles/synopsis_text_style.dart';
 // import '../../app/widgets/chosen_action_button_widget.dart';
 //

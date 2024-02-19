@@ -1,14 +1,14 @@
 import 'package:blue_gorizon_bank_app/consts/app_colors.dart';
+import 'package:blue_gorizon_bank_app/consts/app_text_styles/quiz_text_style.dart';
 import 'package:blue_gorizon_bank_app/data/models/quiz_model.dart';
 import 'package:blue_gorizon_bank_app/views/news/views/news_screen.dart';
-import 'package:blue_gorizon_bank_app/views/synopsis/views/quiz/quiz_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../../data/models/news_model.dart';
-import '../../../util/app_routes.dart';
 import '../../../util/shared_pref_service.dart';
 import '../../app/widgets/income_total_display_widget.dart';
+import '../../quiz/quiz_screen.dart';
 import '../widgets/news_item_widget.dart';
 
 class SynopsisScreen extends StatefulWidget {
@@ -48,6 +48,7 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
     final screenSize = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
+        // automaticallyImplyLeading: false,
         backgroundColor: AppColors.lightGreyColor,
         elevation: 0,
         title: const Text(
@@ -63,7 +64,7 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
             IncomeTotalDisplay(totalIncome: totalIncome),
             Padding(
               padding: EdgeInsets.symmetric(
-                vertical: screenSize.height * 0.01,
+                vertical: screenSize.height * 0.005,
                 horizontal: screenSize.width * 0.03,
               ),
               child: Text(
@@ -72,7 +73,7 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
               ),
             ),
             SizedBox(
-              height: screenSize.height * 0.1,
+              height: screenSize.height * 0.11,
               child: ListView.builder(
                 scrollDirection: Axis.horizontal,
                 itemCount: operations.length,
@@ -80,15 +81,14 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
                   return Card(
                     color: Colors.white,
                     margin: EdgeInsets.symmetric(
-                      vertical: screenSize.height * 0.01,
-                      horizontal: screenSize.width * 0.03,
+                      vertical: screenSize.height * 0.005,
+                      horizontal: screenSize.width * 0.02,
                     ),
                     child: Container(
-                      //color: Colors.white,
-                      width: screenSize.width * 0.28,
+                      width: screenSize.width * 0.3,
                       padding: EdgeInsets.symmetric(
-                        vertical: screenSize.width * 0.02,
-                        horizontal: screenSize.width * 0.03,
+                        vertical: screenSize.width * 0.005,
+                        horizontal: screenSize.width * 0.02,
                       ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -106,9 +106,6 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
                           Text(
                             '${operations[index]['amount'].toStringAsFixed(0)} \$',
                             maxLines: 1,
-                            // style: TextStyle(
-                            //   color: Colors.green,
-                            // ),
                           ),
                         ],
                       ),
@@ -147,7 +144,10 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
                             ),
                             child: Row(
                               children: [
-                                const Text('8 news'),
+                                Text(
+                                  '8 news',
+                                  style: QuizTextStyle.dates,
+                                ),
                                 const Spacer(),
                                 TextButton(
                                     onPressed: () {
@@ -156,7 +156,8 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
                                               builder: (context) =>
                                                   NewsScreen(newsModel: news)));
                                     },
-                                    child: const Text('View all'))
+                                    child: const Text('View all',
+                                        style: SynopsisTextStyle.appbar))
                               ],
                             ),
                           ),
@@ -191,7 +192,10 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
                                 ),
                                 child: Row(
                                   children: [
-                                    const Text('2 themes'),
+                                    Text(
+                                      '2 themes',
+                                      style: QuizTextStyle.dates,
+                                    ),
                                     const Spacer(),
                                     TextButton(
                                       onPressed: () {
@@ -201,7 +205,8 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
                                               QuizScreen(quizzes: quiz),
                                         ));
                                       },
-                                      child: const Text('View all'),
+                                      child: const Text('View all',
+                                          style: SynopsisTextStyle.appbar),
                                     )
                                   ],
                                 ),
@@ -235,7 +240,7 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
 
   Widget buildCard(Size screenSize, String text, String date) {
     return Container(
-      height: screenSize.height * 0.15,
+      height: screenSize.height * 0.17,
       width: double.maxFinite,
       padding: EdgeInsets.symmetric(
         vertical: screenSize.width * 0.01,
@@ -254,7 +259,13 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(text),
+                  Text(
+                    text,
+                    style: QuizTextStyle.theme,
+                    softWrap: true,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 2,
+                  ),
                   const Spacer(),
                   SizedBox(
                     height: 35,
@@ -276,7 +287,7 @@ class _SynopsisScreenState extends State<SynopsisScreen> {
           ),
           Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text(date),
+            child: Text(date, style: QuizTextStyle.date),
           ),
         ],
       ),

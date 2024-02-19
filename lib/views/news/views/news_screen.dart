@@ -16,6 +16,7 @@ class NewsScreen extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
+          // automaticallyImplyLeading: false,
           backgroundColor: AppColors.lightGreyColor,
           elevation: 0,
           title: const Text(

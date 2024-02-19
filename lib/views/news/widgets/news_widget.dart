@@ -22,7 +22,7 @@ class NewsWidget extends StatelessWidget {
               .pushNamed(AppRoutes.article, arguments: newsModel);
         },
         child: Container(
-          height: screenSize.height * 0.4,
+          height: screenSize.height * 0.45,
           width: screenSize.width * 0.98,
           padding: EdgeInsets.symmetric(vertical: screenSize.width * 0.01),
           decoration: BoxDecoration(

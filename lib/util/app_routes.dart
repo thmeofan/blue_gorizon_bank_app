@@ -1,6 +1,5 @@
 import 'package:blue_gorizon_bank_app/data/models/quiz_model.dart';
 import 'package:blue_gorizon_bank_app/views/news/views/news_screen.dart';
-import 'package:blue_gorizon_bank_app/views/synopsis/views/quiz/quiz_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,6 +10,7 @@ import '../views/app/views/home_screen.dart';
 import '../views/income/views/income_screen.dart';
 import '../views/news/views/article_screen.dart';
 import '../views/onboarding_screen/view/onboarding_screen.dart';
+import '../views/quiz/quiz_screen.dart';
 import '../views/settings/views/settings_screen.dart';
 
 abstract class AppRoutes {

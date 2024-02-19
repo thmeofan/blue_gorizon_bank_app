@@ -1,9 +1,6 @@
 import 'dart:math';
+import 'package:blue_gorizon_bank_app/consts/app_text_styles/quiz_text_style.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'dart:math';
-import 'package:flutter/material.dart';
-import 'dart:math';
 
 class SpeechBubble extends StatelessWidget {
   final String text;
@@ -26,16 +23,13 @@ class SpeechBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     int avatarIndex = Random().nextInt(5) + 1;
-    double leftPadding =
-        MediaQuery.of(context).size.width * 0.1; // 10% of the screen width
+    double leftPadding = MediaQuery.of(context).size.width * 0.1;
 
     return Padding(
       padding: EdgeInsets.only(
         top: 8.0,
         bottom: 8.0,
-        left: isQuestion
-            ? 8.0
-            : leftPadding, // Apply additional padding for answers
+        left: isQuestion ? 8.0 : leftPadding,
         right: 8.0,
       ),
       child: Row(
@@ -43,7 +37,7 @@ class SpeechBubble extends StatelessWidget {
         children: [
           Image.asset('assets/images/avatar$avatarIndex.png',
               width: 40.0, height: 40.0),
-          SizedBox(width: 8.0),
+          const SizedBox(width: 8.0),
           Expanded(
             child: Column(
               crossAxisAlignment: isQuestion
@@ -51,16 +45,16 @@ class SpeechBubble extends StatelessWidget {
                   : CrossAxisAlignment.end,
               children: [
                 Container(
-                  padding:
-                      EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-                  margin: EdgeInsets.only(bottom: 4.0),
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 8.0, horizontal: 16.0),
+                  margin: const EdgeInsets.only(bottom: 4.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20.0),
                   ),
                   child: Text(
                     text,
-                    style: TextStyle(fontSize: 16.0),
+                    style: QuizTextStyle.message,
                   ),
                 ),
                 Row(
@@ -73,22 +67,21 @@ class SpeechBubble extends StatelessWidget {
                         onTap: onTap,
                         child: Text(
                           '$answerCount answers',
-                          style: TextStyle(color: Colors.blue),
+                          style: QuizTextStyle.dates,
                         ),
                       ),
                     ],
                     if (date != null)
                       Text(
                         date!,
-                        style: TextStyle(color: Colors.grey),
+                        style: QuizTextStyle.dates,
                       ),
                   ],
                 ),
               ],
             ),
           ),
-          if (onOptionsTap != null &&
-              isQuestion) // Show options button only for questions
+          if (onOptionsTap != null && isQuestion)
             IconButton(
               icon: Icon(Icons.more_vert),
               onPressed: onOptionsTap,

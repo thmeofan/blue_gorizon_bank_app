@@ -1,6 +1,5 @@
 import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 import 'package:flutter/material.dart';
-import '../../../consts/app_colors.dart';
 import '../../../consts/app_text_styles/synopsis_text_style.dart';
 import '../../../data/models/news_model.dart';
 import '../../../util/app_routes.dart';
@@ -21,7 +20,7 @@ class NewsItemWidget extends StatelessWidget {
               .pushNamed(AppRoutes.article, arguments: newsModel);
         },
         child: Container(
-          height: screenSize.height * 0.15,
+          height: screenSize.height * 0.17,
           width: double.maxFinite,
           padding: EdgeInsets.symmetric(vertical: screenSize.width * 0.01),
           decoration: BoxDecoration(
@@ -62,7 +61,7 @@ class NewsItemWidget extends StatelessWidget {
                 borderRadius: BorderRadius.circular(15.0),
                 child: FancyShimmerImage(
                   width: screenSize.width * 0.3,
-                  height: screenSize.height * 0.13,
+                  height: screenSize.height * 0.14,
                   boxFit: BoxFit.cover,
                   imageUrl: newsModel.imageUrl,
                 ),

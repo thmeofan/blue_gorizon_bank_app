@@ -5,7 +5,7 @@ import '../app_colors.dart';
 class SynopsisTextStyle {
   static TextStyle title = TextStyle(
     fontFamily: 'Roboto',
-    fontSize: 18.0,
+    fontSize: 16.0,
     height: 20 / 18,
     fontWeight: FontWeight.w500,
     color: Colors.black.withOpacity(0.5),

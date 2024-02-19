@@ -1,10 +1,11 @@
 import 'package:blue_gorizon_bank_app/consts/app_text_styles/settings_text_style.dart';
+import 'package:blue_gorizon_bank_app/views/app/widgets/chosen_action_button_widget.dart';
+import 'package:blue_gorizon_bank_app/views/synopsis/views/synopsis_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
-
 import '../../../consts/app_colors.dart';
-import '../../../consts/app_text_styles/operation_text_style.dart';
-import '../../../consts/app_text_styles/synopsis_text_style.dart';
+import '../../../consts/app_text_styles/income_text_style.dart';
+import '../../../data/models/news_model.dart';
+import '../../../data/models/quiz_model.dart';
 import '../../../util/shared_pref_service.dart';
 
 class IncomeScreen extends StatefulWidget {
@@ -53,10 +54,10 @@ class _IncomeScreenState extends State<IncomeScreen> {
       builder: (BuildContext bc) {
         return StatefulBuilder(
           builder: (BuildContext context, StateSetter setState) {
-            return Container(
+            return SizedBox(
               height: MediaQuery.of(context).size.height * 0.5,
               child: Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
@@ -64,13 +65,17 @@ class _IncomeScreenState extends State<IncomeScreen> {
                       controller: _descriptionController,
                       decoration: InputDecoration(
                         labelText: 'Income description',
+                        labelStyle: IncomeTextStyle.addIncome,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Text('Select amount: ${tempAmount.toInt()}₽'),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Select amount: ${tempAmount.toInt()}\$',
+                      style: IncomeTextStyle.addIncome,
+                    ),
                     Slider(
                       min: 0,
                       max: 50000,
@@ -81,9 +86,9 @@ class _IncomeScreenState extends State<IncomeScreen> {
                         });
                       },
                     ),
-                    ElevatedButton(
-                      child: const Text('Add Income'),
-                      onPressed: () {
+                    ChosenActionButton(
+                      text: 'Add Income',
+                      onTap: () {
                         if (_descriptionController.text.isNotEmpty) {
                           _addOperation({
                             'description': _descriptionController.text,
@@ -121,21 +126,15 @@ class _IncomeScreenState extends State<IncomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          const Text(
-            'Personal Income',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 4),
           Text(
-            '${totalIncome.toStringAsFixed(0)} \$',
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.green,
-            ),
+            'Personal Income',
+            style: IncomeTextStyle.titleIncome,
           ),
+          const SizedBox(height: 4),
+          Text('${totalIncome.toStringAsFixed(0)} \$',
+              style: _filteredOperations.isEmpty
+                  ? IncomeTextStyle.amountZero
+                  : IncomeTextStyle.amount),
         ],
       ),
     );
@@ -149,9 +148,14 @@ class _IncomeScreenState extends State<IncomeScreen> {
         leading: IconButton(
           color: AppColors.blueColor,
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SynopsisScreen(newsModel: news, quizModel: quiz)),
+            );
           },
-          icon: Icon(Icons.arrow_back_ios_new_outlined),
+          icon: const Icon(Icons.arrow_back_ios_new_outlined),
         ),
         backgroundColor: AppColors.lightGreyColor,
         title: const Text(
@@ -163,7 +167,7 @@ class _IncomeScreenState extends State<IncomeScreen> {
             onPressed: () async {
               _showAddIncomeBottomSheet();
             },
-            child: Text(
+            child: const Text(
               'Add income',
               style: SettingsTextStyle.back,
             ),
@@ -182,7 +186,10 @@ class _IncomeScreenState extends State<IncomeScreen> {
             Padding(
               padding: EdgeInsets.only(
                   top: size.height * 0.01, left: size.height * 0.02),
-              child: Text('Income history'),
+              child: const Text(
+                'Income history',
+                style: IncomeTextStyle.titleHistory,
+              ),
             ),
             Padding(
               padding: EdgeInsets.only(
@@ -190,7 +197,10 @@ class _IncomeScreenState extends State<IncomeScreen> {
                 left: size.height * 0.02,
                 bottom: size.height * 0.01,
               ),
-              child: Text(_filteredOperations.length.toString()),
+              child: Text(
+                '${_filteredOperations.length.toString()} transactions',
+                style: IncomeTextStyle.transactions,
+              ),
             ),
             Expanded(
               child: _filteredOperations.isEmpty
@@ -202,9 +212,11 @@ class _IncomeScreenState extends State<IncomeScreen> {
                           topRight: Radius.circular(16),
                         ),
                       ),
-                      child: const Center(
+                      child: Center(
                           child: Text(
-                              'No information on income yet,\n click on the "Add income" button ')),
+                        'No information on income yet,\n click on the "Add income" button ',
+                        style: IncomeTextStyle.transactions,
+                      )),
                     )
                   : Container(
                       decoration: const BoxDecoration(
@@ -234,11 +246,11 @@ class _IncomeScreenState extends State<IncomeScreen> {
                                 tileColor: AppColors.lightGreyColor,
                                 title: Text(
                                   '${_filteredOperations[index]['description']}  ',
-                                  style: OperationTextStyle.tileSum,
+                                  style: IncomeTextStyle.tileSubtitle,
                                 ),
                                 trailing: Text(
                                   '${_filteredOperations[index]['amount'].toStringAsFixed(0)} \$ ',
-                                  style: OperationTextStyle.tileSubtitle,
+                                  style: IncomeTextStyle.tileSum,
                                 ),
                               ),
                             ),
